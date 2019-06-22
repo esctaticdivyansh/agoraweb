@@ -1,4 +1,3 @@
-let streamDiv;
 let handleFail = function(err){
     console.log("Error : ", err);
 };
@@ -10,12 +9,11 @@ Promise.all([
     faceapi.nets.faceExpressionNet.loadFromUri('/models'),
     ]).then(addVideoStream) 
 function addVideoStream(streamId){
-    streamDiv=document.createElement("div"); // Create a new div for every stream
+    let streamDiv=document.createElement("div"); // Create a new div for every stream
     streamDiv.id=streamId;                       // Assigning id to div
     streamDiv.style.transform="rotateY(180deg)"; // Takes care of lateral inversion (mirror image)
     remoteContainer.appendChild(streamDiv);      // Add new div to container
-}
-streamDiv.addEventListener('play', () => {
+    streamDiv.addEventListener('play', () => {
   const canvas = faceapi.createCanvasFromMedia(video)
   document.body.append(canvas)
   const displaySize = { width: video.width, height: video.height }
@@ -29,6 +27,7 @@ streamDiv.addEventListener('play', () => {
     faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
   }, 100)
 })
+}
 function removeVideoStream (evt) {
     let stream = evt.stream;
     stream.stop();
