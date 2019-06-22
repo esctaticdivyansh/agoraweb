@@ -16,7 +16,7 @@ function addVideoStream(streamId){
     streamDiv.addEventListener('play', () => {
   const canvas = faceapi.createCanvasFromMedia(streamDiv)
   document.body.append(canvas)
-  const displaySize = { width: streamDiv..width, height: streamDiv.height }
+  const displaySize = { width: streamDiv.width, height: streamDiv.height }
   faceapi.matchDimensions(canvas, displaySize)
   setInterval(async () => {
     const detections = await faceapi.detectAllFaces(streamDiv, new faceapi.tinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
