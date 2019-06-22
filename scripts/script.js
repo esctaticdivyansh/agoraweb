@@ -13,20 +13,6 @@ function addVideoStream(streamId){
     streamDiv.id=streamId;                       // Assigning id to div
     streamDiv.style.transform="rotateY(180deg)"; // Takes care of lateral inversion (mirror image)
     remoteContainer.appendChild(streamDiv);      // Add new div to container
-    streamDiv.addEventListener('play', () => {
-  const canvas = faceapi.createCanvasFromMedia(streamDiv)
-  document.body.append(canvas)
-  const displaySize = { width: streamDiv.width, height: streamDiv.height }
-  faceapi.matchDimensions(canvas, displaySize)
-  setInterval(async () => {
-    const detections = await faceapi.detectAllFaces(streamDiv, new faceapi.tinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
-    const resizedDetections = faceapi.resizeResults(detections, displaySize)
-    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-    faceapi.draw.drawDetections(canvas, resizedDetections)
-    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
-    faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
-  }, 100)
-})
 }
 function removeVideoStream (evt) {
     let stream = evt.stream;
@@ -53,6 +39,20 @@ client.join(null,"any-channel",null, (uid)=>{
 
         //Plays the localVideo
         localStream.play('me');
+         client.addEventListener('play', () => {
+  const canvas = faceapi.createCanvasFromMedia(client)
+  document.body.append(canvas)
+  const displaySize = { width: client.width, height: client.height }
+  faceapi.matchDimensions(canvas, displaySize)
+  setInterval(async () => {
+    const detections = await faceapi.detectAllFaces(client, new faceapi.tinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
+    const resizedDetections = faceapi.resizeResults(detections, displaySize)
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+    faceapi.draw.drawDetections(canvas, resizedDetections)
+    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
+    faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
+  }, 100)
+})
 
         //Publishes the stream to the channel
         client.publish(localStream, handleFail);
