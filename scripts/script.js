@@ -1,3 +1,4 @@
+let video=document.getElementById('me');
 let handleFail = function(err){
     console.log("Error : ", err);
 };
@@ -39,27 +40,10 @@ client.join(null,"any-channel",null, (uid)=>{
 
         //Plays the localVideo
         localStream.play('me');
-         client.addEventListener('play', () => {
-  const canvas = faceapi.createCanvasFromMedia(client)
-  document.body.append(canvas)
-  const displaySize = { width: client.width, height: client.height }
-  faceapi.matchDimensions(canvas, displaySize)
-  setInterval(async () => {
-    const detections = await faceapi.detectAllFaces(client, new faceapi.tinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
-    const resizedDetections = faceapi.resizeResults(detections, displaySize)
-    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-    faceapi.draw.drawDetections(canvas, resizedDetections)
-    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
-    faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
-  }, 100)
-})
-
         //Publishes the stream to the channel
         client.publish(localStream, handleFail);
 
     },handleFail);
-
-},handleFail);
 //When a stream is added to a channel
 client.on('stream-added', function (evt) {
     client.subscribe(evt.stream, handleFail);
@@ -70,6 +54,20 @@ client.on('stream-subscribed', function (evt) {
     addVideoStream(stream.getId());
     stream.play(stream.getId());
 });
+video.addEventListener('play', () => {
+  const canvas = faceapi.createCanvasFromMedia(video)
+  document.body.append(canvas)
+  const displaySize = { width: video.width, height: video.height }
+  faceapi.matchDimensions(canvas, displaySize)
+  setInterval(async () => {
+    const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
+    const resizedDetections = faceapi.resizeResults(detections, displaySize)
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+    faceapi.draw.drawDetections(canvas, resizedDetections)
+    faceapi.draw.drawFaceLandmarks(canvas, resizedDetections)
+    faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
+  }, 100)
+})
 //When a person is removed from the stream
 client.on('stream-removed',removeVideoStream);
 client.on('peer-leave',removeVideoStream);
