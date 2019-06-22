@@ -54,6 +54,9 @@ client.on('stream-subscribed', function (evt) {
     addVideoStream(stream.getId());
     stream.play(stream.getId());
 });
+//When a person is removed from the stream
+client.on('stream-removed',removeVideoStream);
+client.on('peer-leave',removeVideoStream);
 video.addEventListener('play', () => {
   const canvas = faceapi.createCanvasFromMedia(video)
   document.body.append(canvas)
@@ -68,6 +71,3 @@ video.addEventListener('play', () => {
     faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
   }, 100)
 })
-//When a person is removed from the stream
-client.on('stream-removed',removeVideoStream);
-client.on('peer-leave',removeVideoStream);
